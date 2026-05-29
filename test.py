@@ -72,6 +72,8 @@ player = Player((255, 0, 0), 40, 40, 100, 750, 5)
 
 # Создаем платформы
 platforms = sprite.Group()
+platforms.add(Platform((0, 255, 0), 1600, 30, 0, 899))
+
 platforms.add(Platform((0, 255, 0), 200, 30, 0, 800))
 platforms.add(Platform((0, 255, 0), 150, 30, 300, 700))
 platforms.add(Platform((0, 255, 0), 150, 30, 550, 600))
@@ -93,27 +95,39 @@ platforms.add(Platform((0, 255, 0), 150, 30, 800, 100))
 platforms.add(Platform((0, 255, 0), 150, 30, 1100, 100))
 platforms.add(Platform((0, 255, 0), 150, 30, 1400, 100))
 
-platforms.add(Platform((0, 255, 0), 1600, 30, 0, 899))
+
+
+gold = GameSprite('finish.png', 1490, 50, 80, 50, 0)
 
 game = True
+finish = False
 
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
 
-    player.update()  
+    if not finish:  
+        player.update()  
     
     window.fill((135, 206, 235))
     
+    if sprite.collide_rect(player, gold) and not finish:
+        finish = True
+        print('Победа')
+
     for plat in platforms:
         plat.reset()
-
-    if player.rect.y - 50 == win_height:
-        player.rect.x = 40
-        player.rect.y = 40
     
-    player.reset()
+    if not finish:
+        player.reset()
+    gold.reset()
+    
+    if finish:
+        win_text = font1.render('Ты победил!', True, (255, 215, 0))
+        text_rect = win_text.get_rect(center=(win_width//2, win_height//2))
+        window.blit(win_text, text_rect)
+    
 
     clock.tick(FPS)
     display.update()
